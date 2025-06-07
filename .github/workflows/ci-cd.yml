@@ -31,3 +31,8 @@ jobs:
 
       - name: Deploy to Firebase Functions
         run: firebase deploy --only functions --token "${{ secrets.FIREBASE_TOKEN }}"
+
+      - name: Ensure Artifact Registry cleanup policy
+        run: |
+          firebase functions:artifacts:setpolicy --force --token "${{ secrets.FIREBASE_TOKEN }}" \
+          || echo "Advertencia de limpieza de artefactos ignorada"
