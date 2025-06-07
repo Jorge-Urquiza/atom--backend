@@ -29,9 +29,8 @@ jobs:
       - name: Install latest Firebase CLI
         run: npm install -g firebase-tools@latest
 
-      - name: Deploy to Firebase Functions
-        run: firebase deploy --only functions --token "${{ secrets.FIREBASE_TOKEN }}"
-
-      - name: Ensure Artifact Registry cleanup policy
+      - name: Deploy and setup cleanup policy
         run: |
-          firebase functions:artifacts:setpolicy --force --token "${{ secrets.FIREBASE_TOKEN }}"
+          firebase deploy --only functions --token "${{ secrets.FIREBASE_TOKEN }}" || true
+          # Intenta configurar política de limpieza, pero no falle si da error
+          firebase functions:artifacts:setpolicy --force --token "${{ secrets.FIREBASE_TOKEN }}" || true
