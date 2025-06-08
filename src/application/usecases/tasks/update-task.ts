@@ -1,5 +1,5 @@
 import { TaskRepository } from "../../../domain/repositories/task.repository";
-import { UpdateTaskDto } from "../../dtos/update-task.dto";
+import { UpdateTaskDto } from "../../dtos/task/update-task.dto";
 
 export class UpdateTask {
   constructor(private taskRepository: TaskRepository) {}
