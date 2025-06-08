@@ -1,4 +1,4 @@
-import { TaskRepository } from "../../domain/repositories/task.repository";
+import { TaskRepository } from "../../../domain/repositories/task.repository";
 
 export class GetUserTasks  {
   constructor(private taskRepository: TaskRepository) {}
