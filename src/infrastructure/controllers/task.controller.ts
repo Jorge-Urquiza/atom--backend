@@ -7,56 +7,53 @@ import { CreateTask } from "../../application/usecases/tasks/create-task";
 import { UpdateTask } from "../../application/usecases/tasks/update-task";
 import { DeleteTask } from "../../application/usecases/tasks/delete-task";
 import { AuthenticatedRequest } from "../middleware/authenticated-request";
+import { HttpStatusCode } from "../../shared/constants/http-status";
+import { ApiResponse } from "../../shared/api-response";
+import { AppError } from "../../shared/app-error";
 
 const taskRepository = new TaskRepositoryImpl();
 
 export class TaskController {
-  static async getTasksByUser(req: AuthenticatedRequest, res: Response) {
-    const userId = req.params.userId;
-    const getUserTasksUseCase = new GetUserTasks(taskRepository);
-    try {
-      const tasks = await getUserTasksUseCase.execute(userId);
-      res.json(tasks);
-    } catch (err) {
-      console.error("Error fetching tasks:", err);
-      res.status(500).json({ message: "Error fetching tasks" });
-    }
+  static async getTasksByUser(
+    request: AuthenticatedRequest,
+    response: Response
+  ): Promise<void> {
+    const userId = request.params.userId;
+    const useCase = new GetUserTasks(taskRepository);
+
+    const tasks = await useCase.execute(userId);
+    response.status(HttpStatusCode.OK).json(ApiResponse.success(tasks));
   }
 
-  static async createTask(req: AuthenticatedRequest, res: Response) {
+  static async createTask(
+    request: AuthenticatedRequest,
+    response: Response
+  ): Promise<void> {
     const useCase = new CreateTask(taskRepository);
-
-    try {
-      const id = await useCase.execute(req.body);
-      res.status(201).json({ id });
-    } catch (err) {
-      console.error("Error en createTask:", err);
-      res.status(500).json({ message: "Error creating task", error: err });
-    }
+    const id = await useCase.execute(request.body);
+    response
+      .status(HttpStatusCode.CREATED)
+      .json(ApiResponse.success({ id }, "Task created"));
   }
-
-  static async updateTask(req: AuthenticatedRequest, res: Response) {
-    const taskId = req.params.id;
+  static async updateTask(
+    request: AuthenticatedRequest,
+    response: Response
+  ): Promise<void> {
+    const taskId = request.params.id;
     const useCase = new UpdateTask(taskRepository);
+    await useCase.execute(taskId, request.body);
 
-    try {
-      await useCase.execute(taskId, req.body);
-      res.status(204).send();
-    } catch (err) {
-      console.error("Error en updateTask:", err);
-      res.status(500).json({ message: "Error updating task", error: err });
-    }
+    response
+      .status(HttpStatusCode.OK)
+      .json(ApiResponse.success(null, "Task updated"));
   }
-  static async deleteTask(req: AuthenticatedRequest, res: Response) {
-    const taskId = req.params.id;
-    const useCase = new DeleteTask(taskRepository);
 
-    try {
-      await useCase.execute(taskId);
-      res.status(204).send();
-    } catch (err) {
-      console.error("Error en deleteTask:", err);
-      res.status(500).json({ message: "Error deleting task", error: err });
-    }
+  static async deleteTask(
+    request: AuthenticatedRequest,
+    response: Response
+  ): Promise<void> {
+    const taskId = request.params.id;
+    await new DeleteTask(taskRepository).execute(taskId);
+    response.status(HttpStatusCode.NO_CONTENT).send();
   }
 }

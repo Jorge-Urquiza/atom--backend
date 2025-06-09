@@ -4,6 +4,7 @@ export class GetUserTasks  {
   constructor(private taskRepository: TaskRepository) {}
 
   async execute(userId: string) {
-    return this.taskRepository.findAllByUser(userId);
+    const tasks = await this.taskRepository.findAllByUser(userId);
+    return tasks;
   }
 }

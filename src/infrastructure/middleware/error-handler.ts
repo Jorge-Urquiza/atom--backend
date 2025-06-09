@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { HttpStatusCode } from "../../shared/constants/http-status";
 
 export function errorHandler(
   err: any,
@@ -8,7 +9,7 @@ export function errorHandler(
 ): void {
   console.error("Error 💥:", err);
 
-  const status = err.statusCode || 500;
+  const status = err.statusCode || HttpStatusCode.INTERNAL_SERVER_ERROR;
   const message = err.message || "Internal Server Error";
 
   res.status(status).json({

@@ -2,25 +2,23 @@ import { Request, Response } from "express";
 import { GenerateToken } from "../../application/usecases/auth/generate-token";
 import { FindUserByEmail } from "../../application/usecases/users/find-user-by-email";
 import { UserRepositoryImpl } from "../repositories/user.repository.impl";
+import { HttpStatusCode } from "../../shared/constants/http-status";
+import { ApiResponse } from "../../shared/api-response";
+import { AppError } from "../../shared/app-error";
 
 const userRepository = new UserRepositoryImpl();
 
 export class AuthController {
-  static async login(req: Request, res: Response) {
-    try {
-      const { email } = req.body as { email: string };
-      const findUser = new FindUserByEmail(userRepository);
-      const user = await findUser.execute(email);
-      if (!user) {
-        res.status(404).json({ message: "User not found" });
-        return;
-      }
-      const token = new GenerateToken().execute(user);
+  static async login(req: Request, response: Response): Promise<void> {
+    const { email } = req.body;
 
-      res.status(200).json({ token, user });
-    } catch (err) {
-      console.error("Login error:", err);
-      res.status(500).json({ message: "Login failed", error: err });
-    }
+    const findUser = new FindUserByEmail(userRepository);
+    const user = await findUser.execute(email);
+
+    const token = new GenerateToken().execute(user);
+
+    response
+      .status(HttpStatusCode.OK)
+      .json(ApiResponse.success({ token, user }));
   }
 }

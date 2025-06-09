@@ -5,9 +5,9 @@ import { CreateTaskDto } from "../../dtos/task/create-task.dto";
 export class CreateTask {
   constructor(private readonly taskRepository: TaskRepository) {}
 
-  async execute(data: CreateTaskDto): Promise<string> {
+  async execute(createTaskDto: CreateTaskDto): Promise<string> {
     const task: Task = {
-      ...data,
+      ...createTaskDto,
       completed: false,
       createdAt: new Date(),
       updatedAt: null,

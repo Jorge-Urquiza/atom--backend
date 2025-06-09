@@ -1,36 +1,27 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response } from "express";
 
 import { UserRepositoryImpl } from "../repositories/user.repository.impl";
-import { FindUserByEmail } from '../../application/usecases/users/find-user-by-email';
-import { CreateUser } from '../../application/usecases/users/create-user';
+import { CreateUser } from "../../application/usecases/users/create-user";
+import { HttpStatusCode } from "../../shared/constants/http-status";
+import { ApiResponse } from "../../shared/api-response";
+import { AppError } from "../../shared/app-error";
 
 const userRepository = new UserRepositoryImpl();
 export class UserController {
-  static async create(req: Request, res: Response) {
+  static async create(request: Request, response: Response): Promise<void> {
     try {
-      const dto = req.body;
+      const dto = request.body;
       const createUser = new CreateUser(userRepository);
       const user = await createUser.execute(dto);
-      res.status(200).json(user);
+      response.status(HttpStatusCode.CREATED).json(ApiResponse.success(user));
     } catch (err) {
-      console.error('Error create:', err);
-      res.status(500).json({ message: 'Error user', error: err });
-    }
-  }
-
-  static async findByEmail(req: Request, res: Response) {
-    try {
-      const { email } = req.params;
-      const useCase = new FindUserByEmail(userRepository);
-      const user = await useCase.execute(email);
-       if (!user) {
-        res.status(404).json({ message: 'User not found' });
-        return;
+      console.error("Error create:", err);
+      if (err instanceof AppError) {
+        response.status(err.statusCode).json(ApiResponse.error(err.message));
       }
-      res.status(200).json(user);
-    } catch (err) {
-      console.error('Error findByEmail:', err);
-      res.status(500).json({ message: 'Error user', error: err });
+      response
+        .status(HttpStatusCode.INTERNAL_SERVER_ERROR)
+        .json(ApiResponse.error("Error creating user"));
     }
   }
 }
