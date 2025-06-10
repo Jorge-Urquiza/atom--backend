@@ -1,26 +1,24 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 
 import { TaskRepositoryImpl } from "../repositories/task.repository.impl";
 
-import { GetUserTasks } from "../../application/usecases/tasks/get-user-tasks";
+import { GetTasks } from "../../application/usecases/tasks/get-tasks";
 import { CreateTask } from "../../application/usecases/tasks/create-task";
 import { UpdateTask } from "../../application/usecases/tasks/update-task";
 import { DeleteTask } from "../../application/usecases/tasks/delete-task";
 import { AuthenticatedRequest } from "../middleware/authenticated-request";
 import { HttpStatusCode } from "../../shared/constants/http-status";
 import { ApiResponse } from "../../shared/api-response";
-import { AppError } from "../../shared/app-error";
 
 const taskRepository = new TaskRepositoryImpl();
 
 export class TaskController {
-  static async getTasksByUser(
+  static async getTasks(
     request: AuthenticatedRequest,
     response: Response
   ): Promise<void> {
-    const userId = request.params.userId;
-    const useCase = new GetUserTasks(taskRepository);
-
+    const userId = request.userId ?? '';
+    const useCase = new GetTasks(taskRepository);
     const tasks = await useCase.execute(userId);
     response.status(HttpStatusCode.OK).json(ApiResponse.success(tasks));
   }
@@ -29,8 +27,9 @@ export class TaskController {
     request: AuthenticatedRequest,
     response: Response
   ): Promise<void> {
+    const userId = request.userId ?? '';
     const useCase = new CreateTask(taskRepository);
-    const id = await useCase.execute(request.body);
+    const id = await useCase.execute(userId, request.body);
     response
       .status(HttpStatusCode.CREATED)
       .json(ApiResponse.success({ id }, "Task created"));
