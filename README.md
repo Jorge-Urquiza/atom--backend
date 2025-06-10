@@ -28,6 +28,11 @@ npm run build
 firebase emulators:start
 
 ```
+# Set Environment Variables in Production (Firebase) .
+```bash
+firebase functions:secrets:set JWT_SECRET 
+```
+and write your secret
 
 ## Run unit test
 ```bash
@@ -35,9 +40,79 @@ npm test
 ```
 
 ## Endpoints
-- POST /auth/login – Login de usuario (devuelve token firmado con JWT)
-- POST /users/create – Registro de nuevo usuario
-- GET /tasks – Listar tareas del usuario (protegido con JWT)
-- POST /tasks – Crear nueva tarea (protegido)
-- PUT /tasks/:id – Actualizar tarea (protegido)
-- DELETE /tasks/:id – Eliminar tarea (protegido)
+
+### POST /auth/login
+Login de usuario y generación de token JWT.
+**Request Body:**
+```json
+{
+  "email": "juan.perez@example.com"
+}
+```
+
+### POST /users/create
+Crea un nuevo usuario.
+**Request Body:**
+```json
+{
+  "email": "juan.cardenas@example.com"
+}
+```
+### GET /tasks
+Lista las tareas del usuario autenticado.
+**Headers:**
+```json
+    Authorization: Bearer <JWT_TOKEN>
+```
+
+### POST /tasks
+Crea una nueva tarea.
+
+**Headers:**
+```json
+    Authorization: Bearer <JWT_TOKEN>
+```
+**Request Body:**
+```json
+{
+  "title": "Title task",
+  "description": "Description for ATOM"
+}
+```
+
+
+### PUT /tasks/:id
+Crea una nueva tarea.
+
+**Headers:**
+```json
+    Authorization: Bearer <JWT_TOKEN>
+```
+**Request Body:**
+```json
+{
+  "title": "Title task update",
+  "description": "Description update for ATOM"
+}
+```
+
+### DELETE /tasks/:id
+Elimina una tarea (soft delete).
+
+**Headers:**
+```json
+    Authorization: Bearer <JWT_TOKEN>
+```
+
+
+## Consideraciones Técnicas y Mejoras Pendientes
+
+- **Documentación con Swagger (OpenAPI):** Se puede integrar `swagger-jsdoc` y `swagger-ui-express` para exponer y probar los endpoints de forma visual.
+- **Uso de Mappers (DTO => Entidades):** Actualmente los objetos se transfieren directamente. Sería recomendable implementar mapeadores explícitos para convertir entre DTOs y entidades de dominio.
+- **Autenticación más robusta:** Agregar validaciones adicionales, como firma segura del token, uso de refresh tokens ectc...
+---
+
+## Contacto
+Si tenés dudas, sugerencias o querés colaborar, no dudes en abrir un issue o enviar un pull request. 
+
+---
