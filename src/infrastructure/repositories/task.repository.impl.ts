@@ -30,6 +30,7 @@ export class TaskRepositoryImpl implements TaskRepository {
       const snapshot = await db
         .collection(COLLECTION)
         .where("userId", "==", userId)
+        .where("completed", "==", false)
         .where("deletedAt", "==", null)
         .orderBy("createdAt", "desc")
         .get();
@@ -42,6 +43,7 @@ export class TaskRepositoryImpl implements TaskRepository {
           } as Task)
       );
     } catch (err) {
+      console.log("test: ", err);
       throw new AppError(
         "Error retrieving tasks",
         HttpStatusCode.INTERNAL_SERVER_ERROR
