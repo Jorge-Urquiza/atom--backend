@@ -1,4 +1,4 @@
-# 📝 Task API
+# Task API
 
 Una API REST construida con **Node.js**, **Express**, **TypeScript**, y **Firebase Firestore**, que permite gestionar tareas por usuario, con autenticación por token JWT.
 
@@ -28,7 +28,13 @@ npm run build
 firebase emulators:start
 
 ```
-## Endpoints Principales
+
+## Run unit test
+```bash
+npm test
+```
+
+## Endpoints
 - POST /auth/login – Login de usuario (devuelve token firmado con JWT)
 - POST /users/create – Registro de nuevo usuario
 - GET /tasks – Listar tareas del usuario (protegido con JWT)
