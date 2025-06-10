@@ -3,6 +3,7 @@ import { TaskRepository } from "../../domain/repositories/task.repository";
 import { Task } from "../../domain/entities/task";
 import { AppError } from "../../shared/app-error";
 import { HttpStatusCode } from "../../shared/constants/http-status";
+import { parseFirestoreTimestamps } from "../../shared/firestore-utils";
 
 const COLLECTION = "tasks";
 
@@ -37,10 +38,10 @@ export class TaskRepositoryImpl implements TaskRepository {
 
       return snapshot.docs.map(
         (doc) =>
-          ({
+          parseFirestoreTimestamps({
             id: doc.id,
             ...doc.data(),
-          } as Task)
+          }) as Task
       );
     } catch (err) {
       console.log("test: ", err);
@@ -89,8 +90,7 @@ export class TaskRepositoryImpl implements TaskRepository {
   async delete(id: string): Promise<void> {
     try {
       await db.collection(COLLECTION).doc(id).update({
-        deletedAt: new Date(),
-        updatedAt: null,
+        deletedAt: new Date()
       });
     } catch (err) {
       throw new AppError(

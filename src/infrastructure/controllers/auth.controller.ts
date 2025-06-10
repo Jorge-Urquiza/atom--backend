@@ -5,13 +5,14 @@ import { UserRepositoryImpl } from "../repositories/user.repository.impl";
 import { HttpStatusCode } from "../../shared/constants/http-status";
 import { ApiResponse } from "../../shared/api-response";
 import { AppError } from "../../shared/app-error";
+import { AuthDto } from "../../application/dtos/auth/auth.dto";
 
 const userRepository = new UserRepositoryImpl();
 
 export class AuthController {
   static async login(req: Request, response: Response): Promise<void> {
-    const { email } = req.body;
-
+    const loginDto: AuthDto = req.body;
+    const { email } = loginDto;
     const findUser = new FindUserByEmail(userRepository);
     const user = await findUser.execute(email);
 

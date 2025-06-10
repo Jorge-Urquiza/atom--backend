@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import 'reflect-metadata';
 import taskRoutes from './infrastructure/routes/task.routes';
 import userRoutes from './infrastructure/routes/user.routes';
 import authRoutes from './infrastructure/routes/auth.routes';

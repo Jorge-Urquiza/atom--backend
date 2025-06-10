@@ -18,10 +18,13 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "firebase-admin": "^13.4.0",
     "firebase-functions": "^6.3.2",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "reflect-metadata": "^0.2.2"
   }
 }

@@ -2,7 +2,7 @@ import { User } from "../../../domain/entities/user";
 import { UserRepository } from "../../../domain/repositories/user.repository";
 import { AppError } from "../../../shared/app-error";
 import { HttpStatusCode } from "../../../shared/constants/http-status";
-import { CreateUserDto } from "../../dtos/task/create-user.dto";
+import { CreateUserDto } from "../../dtos/user/create-user.dto";
 
 export class CreateUser {
   constructor(private userRepository: UserRepository) {}
